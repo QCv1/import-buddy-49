@@ -77,7 +77,7 @@ export async function fetchAgentDetails(rawUrl: string): Promise<AgentDetails | 
   }
 
   const qcImages: string[] = Array.isArray(estimate?.qcImages)
-    ? estimate.qcImages.map(String).filter(Boolean)
+    ? estimate.qcImages.map(String).filter(Boolean).slice(0, 10)
     : [];
 
   const price =

@@ -1,12 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { lookupQc } from "@/lib/media.functions";
+import { qcForProduct } from "@/lib/qc.functions";
 import { useProducts, type Product } from "@/lib/store";
 import { useLang } from "@/lib/i18n";
 import { QcGrid } from "@/components/QcViewer";
 
 export const Route = createFileRoute("/qc")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    product: typeof search['product'] === "string" ? search['product'] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Zdjęcia QC — PKMREPS QC Finder" },
@@ -33,10 +37,34 @@ function QcPage() {
   const { t } = useLang();
   const { data: products } = useProducts();
   const run = useServerFn(lookupQc);
+  const loadProductQc = useServerFn(qcForProduct);
+  const { product: productId } = Route.useSearch();
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Lookup>(null);
   const [error, setError] = useState("");
+  const [focused, setFocused] = useState<{ title: string; images: string[] } | null>(null);
+  const [focusBusy, setFocusBusy] = useState(false);
+
+  useEffect(() => {
+    if (!productId) {
+      setFocused(null);
+      return;
+    }
+    let alive = true;
+    setFocusBusy(true);
+    setFocused(null);
+    void loadProductQc({ data: { productId } })
+      .then((res) => {
+        if (alive && res.ok) setFocused({ title: res.title, images: res.images });
+      })
+      .catch(() => {})
+      .finally(() => alive && setFocusBusy(false));
+    return () => {
+      alive = false;
+    };
+  }, [productId, loadProductQc]);
+
   
 
   const withQc = useMemo(
@@ -91,6 +119,19 @@ function QcPage() {
         </p>
       ) : null}
 
+      {productId ? (
+        <section className="mb-10 rounded-2xl border border-border bg-surface p-4">
+          <h2 className="mb-3 text-lg font-bold">{focused?.title || t("qc.result")}</h2>
+          {focusBusy ? (
+            <p className="rounded-xl border border-border bg-surface-deep p-4 text-center text-sm text-muted-foreground">
+              {t("qc.loading")}
+            </p>
+          ) : (
+            <QcGrid images={focused?.images ?? []} />
+          )}
+        </section>
+      ) : null}
+
       {result?.ok ? (
         <section className="mb-10">
           <h2 className="mb-3 text-lg font-bold">{result.title || t("qc.result")}</h2>
@@ -117,6 +158,13 @@ function QcPage() {
             <article key={p.id} className="rounded-2xl border border-border bg-surface p-3">
               <p className="mb-2 truncate text-sm font-semibold">{p.title}</p>
               <QcGrid images={(p.qc_images ?? []).slice(0, 6)} cols="grid-cols-3" />
+              <Link
+                to="/qc"
+                search={{ product: p.id }}
+                className="mt-2 block rounded-lg border border-border px-3 py-1.5 text-center text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                {t("qc.show", "Pokaż QC")}
+              </Link>
             </article>
           ))}
         </div>

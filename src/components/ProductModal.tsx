@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { PriceTags, QualityBadges, VerifiedBadge } from "@/components/PriceTags";
 import type { Agent, Product } from "@/lib/store";
 import { registerProductView } from "@/lib/secure.functions";
@@ -150,8 +151,17 @@ export function ProductModal({
               <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 QC
               </p>
-              <QcGrid images={product.qc_images ?? []} cols="grid-cols-3" />
+              <QcGrid images={(product.qc_images ?? []).slice(0, 6)} cols="grid-cols-3" />
+              <Link
+                to="/qc"
+                search={{ product: product.id }}
+                onClick={onClose}
+                className="mt-2 block rounded-lg border border-border px-3 py-2 text-center text-xs font-extrabold uppercase tracking-wide text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                {t("qc.show", "Pokaż QC")}
+              </Link>
             </div>
+
 
 
             {product.qc_url ? (
