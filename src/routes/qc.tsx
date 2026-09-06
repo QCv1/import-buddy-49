@@ -158,13 +158,6 @@ function QcPage() {
             <article key={p.id} className="rounded-2xl border border-border bg-surface p-3">
               <p className="mb-2 truncate text-sm font-semibold">{p.title}</p>
               <QcGrid images={(p.qc_images ?? []).slice(0, 6)} cols="grid-cols-3" />
-              <Link
-                to="/qc"
-                search={{ product: p.id }}
-                className="mt-2 block rounded-lg border border-border px-3 py-1.5 text-center text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-              >
-                {t("qc.show", "Pokaż QC")}
-              </Link>
             </article>
           ))}
         </div>
