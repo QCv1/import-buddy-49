@@ -152,14 +152,6 @@ export function ProductModal({
                 QC
               </p>
               <QcGrid images={(product.qc_images ?? []).slice(0, 6)} cols="grid-cols-3" />
-              <Link
-                to="/qc"
-                search={{ product: product.id }}
-                onClick={onClose}
-                className="mt-2 block rounded-lg border border-border px-3 py-2 text-center text-xs font-extrabold uppercase tracking-wide text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-              >
-                {t("qc.show", "Pokaż QC")}
-              </Link>
             </div>
 
 
