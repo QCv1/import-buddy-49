@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { lookupQc } from "@/lib/media.functions";
+import { qcForProduct } from "@/lib/qc.functions";
 import { useProducts, type Product } from "@/lib/store";
 import { useLang } from "@/lib/i18n";
 import { QcGrid } from "@/components/QcViewer";
