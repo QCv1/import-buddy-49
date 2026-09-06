@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+
 import { PriceTags, QualityBadges, VerifiedBadge } from "@/components/PriceTags";
 import type { Agent, Product } from "@/lib/store";
 import { registerProductView } from "@/lib/secure.functions";
