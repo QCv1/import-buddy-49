@@ -1201,6 +1201,8 @@ function ProductsTab() {
   /** Produkt bez działającego zdjęcia — trafia na samą górę listy do poprawy. */
   const brokenImage = (p: Product) =>
     !p.image_url || p.image_url.startsWith("/api/public/product-image");
+  /** Produkt bez zdjęć QC (sprawdzone u agentów — brak w magazynie) — na samą górę. */
+  const noQc = (p: Product) => (p.qc_images ?? []).length === 0;
 
   const matched = useMemo(() => {
     const list = ordered.filter((p) =>
@@ -1211,10 +1213,15 @@ function ProductsTab() {
         : true,
     );
     if (orderIds) return list;
-    // Stabilne sortowanie: najpierw produkty bez zdjęcia.
+    // Stabilne sortowanie: najpierw produkty bez zdjęć QC, potem bez zdjęcia głównego.
     return list
       .map((p, i) => ({ p, i }))
-      .sort((a, b) => Number(brokenImage(b.p)) - Number(brokenImage(a.p)) || a.i - b.i)
+      .sort(
+        (a, b) =>
+          Number(noQc(b.p)) - Number(noQc(a.p)) ||
+          Number(brokenImage(b.p)) - Number(brokenImage(a.p)) ||
+          a.i - b.i,
+      )
       .map((x) => x.p);
   }, [ordered, q, orderIds]);
 
