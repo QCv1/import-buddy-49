@@ -3,15 +3,16 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  // Zawsze świeże dane: zmiany z panelu widać od razu u wszystkich odwiedzających.
+  // Dane katalogu są cache'owane przez chwilę — strona nie przeładowuje
+  // całej listy przy każdym przejściu między zakładkami (dużo szybsze działanie).
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 0,
-        gcTime: 60_000,
-        refetchOnMount: "always",
-        refetchOnWindowFocus: "always",
-        refetchOnReconnect: "always",
+        staleTime: 5 * 60_000,
+        gcTime: 30 * 60_000,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         retry: 1,
       },
     },
