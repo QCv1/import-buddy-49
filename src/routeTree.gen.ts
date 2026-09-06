@@ -22,6 +22,7 @@ import { Route as SellerRouteImport } from './routes/seller'
 import { Route as SprzedawcyRouteImport } from './routes/sprzedawcy'
 import { Route as SklepSlugRouteImport } from './routes/sklep.$slug'
 import { Route as ApiPublicProductImageRouteImport } from './routes/api/public/product-image'
+import { Route as ApiPublicSeedImportRouteImport } from './routes/api/public/seed-import'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,11 @@ const ApiPublicProductImageRoute = ApiPublicProductImageRouteImport.update({
   path: '/api/public/product-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSeedImportRoute = ApiPublicSeedImportRouteImport.update({
+  id: '/api/public/seed-import',
+  path: '/api/public/seed-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/sprzedawcy': typeof SprzedawcyRoute
   '/sklep/$slug': typeof SklepSlugRoute
   '/api/public/product-image': typeof ApiPublicProductImageRoute
+  '/api/public/seed-import': typeof ApiPublicSeedImportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/sprzedawcy': typeof SprzedawcyRoute
   '/sklep/$slug': typeof SklepSlugRoute
   '/api/public/product-image': typeof ApiPublicProductImageRoute
+  '/api/public/seed-import': typeof ApiPublicSeedImportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/sprzedawcy': typeof SprzedawcyRoute
   '/sklep/$slug': typeof SklepSlugRoute
   '/api/public/product-image': typeof ApiPublicProductImageRoute
+  '/api/public/seed-import': typeof ApiPublicSeedImportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/sprzedawcy'
     | '/sklep/$slug'
     | '/api/public/product-image'
+    | '/api/public/seed-import'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/sprzedawcy'
     | '/sklep/$slug'
     | '/api/public/product-image'
+    | '/api/public/seed-import'
   id:
     | '__root__'
     | '/'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/sprzedawcy'
     | '/sklep/$slug'
     | '/api/public/product-image'
+    | '/api/public/seed-import'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -197,6 +209,7 @@ export interface RootRouteChildren {
   SprzedawcyRoute: typeof SprzedawcyRoute
   SklepSlugRoute: typeof SklepSlugRoute
   ApiPublicProductImageRoute: typeof ApiPublicProductImageRoute
+  ApiPublicSeedImportRoute: typeof ApiPublicSeedImportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicProductImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/seed-import': {
+      id: '/api/public/seed-import'
+      path: '/api/public/seed-import'
+      fullPath: '/api/public/seed-import'
+      preLoaderRoute: typeof ApiPublicSeedImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -309,6 +329,7 @@ const rootRouteChildren: RootRouteChildren = {
   SprzedawcyRoute: SprzedawcyRoute,
   SklepSlugRoute: SklepSlugRoute,
   ApiPublicProductImageRoute: ApiPublicProductImageRoute,
+  ApiPublicSeedImportRoute: ApiPublicSeedImportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
