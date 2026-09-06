@@ -1201,6 +1201,8 @@ function ProductsTab() {
   /** Produkt bez działającego zdjęcia — trafia na samą górę listy do poprawy. */
   const brokenImage = (p: Product) =>
     !p.image_url || p.image_url.startsWith("/api/public/product-image");
+  /** Produkt bez zdjęć QC (sprawdzone u agentów — brak w magazynie) — na samą górę. */
+  const noQc = (p: Product) => (p.qc_images ?? []).length === 0;
 
   const matched = useMemo(() => {
     const list = ordered.filter((p) =>
