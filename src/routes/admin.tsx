@@ -1213,10 +1213,15 @@ function ProductsTab() {
         : true,
     );
     if (orderIds) return list;
-    // Stabilne sortowanie: najpierw produkty bez zdjęcia.
+    // Stabilne sortowanie: najpierw produkty bez zdjęć QC, potem bez zdjęcia głównego.
     return list
       .map((p, i) => ({ p, i }))
-      .sort((a, b) => Number(brokenImage(b.p)) - Number(brokenImage(a.p)) || a.i - b.i)
+      .sort(
+        (a, b) =>
+          Number(noQc(b.p)) - Number(noQc(a.p)) ||
+          Number(brokenImage(b.p)) - Number(brokenImage(a.p)) ||
+          a.i - b.i,
+      )
       .map((x) => x.p);
   }, [ordered, q, orderIds]);
 
