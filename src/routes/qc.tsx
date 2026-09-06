@@ -36,10 +36,34 @@ function QcPage() {
   const { t } = useLang();
   const { data: products } = useProducts();
   const run = useServerFn(lookupQc);
+  const loadProductQc = useServerFn(qcForProduct);
+  const { product: productId } = Route.useSearch();
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Lookup>(null);
   const [error, setError] = useState("");
+  const [focused, setFocused] = useState<{ title: string; images: string[] } | null>(null);
+  const [focusBusy, setFocusBusy] = useState(false);
+
+  useEffect(() => {
+    if (!productId) {
+      setFocused(null);
+      return;
+    }
+    let alive = true;
+    setFocusBusy(true);
+    setFocused(null);
+    void loadProductQc({ data: { productId } })
+      .then((res) => {
+        if (alive && res.ok) setFocused({ title: res.title, images: res.images });
+      })
+      .catch(() => {})
+      .finally(() => alive && setFocusBusy(false));
+    return () => {
+      alive = false;
+    };
+  }, [productId, loadProductQc]);
+
   
 
   const withQc = useMemo(
