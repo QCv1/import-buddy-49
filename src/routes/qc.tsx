@@ -9,7 +9,7 @@ import { QcGrid } from "@/components/QcViewer";
 
 export const Route = createFileRoute("/qc")({
   validateSearch: (search: Record<string, unknown>) => ({
-    product: typeof search.product === "string" ? search.product : undefined,
+    product: typeof search['product'] === "string" ? search['product'] : undefined,
   }),
   head: () => ({
     meta: [
