@@ -152,6 +152,15 @@ export function ProductModal({
                 QC
               </p>
               <QcGrid images={(product.qc_images ?? []).slice(0, 6)} cols="grid-cols-3" />
+              {(product.qc_images ?? []).length > 6 ? (
+                <Link
+                  to="/qc"
+                  search={{ product: product.id }}
+                  className="mt-2 block rounded-lg border border-border px-3 py-2 text-center text-xs font-bold uppercase tracking-wide text-primary hover:border-primary"
+                >
+                  Pokaż wszystkie QC ({(product.qc_images ?? []).length}) →
+                </Link>
+              ) : null}
             </div>
 
 
