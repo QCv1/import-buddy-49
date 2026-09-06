@@ -119,6 +119,19 @@ function QcPage() {
         </p>
       ) : null}
 
+      {productId ? (
+        <section className="mb-10 rounded-2xl border border-border bg-surface p-4">
+          <h2 className="mb-3 text-lg font-bold">{focused?.title || t("qc.result")}</h2>
+          {focusBusy ? (
+            <p className="rounded-xl border border-border bg-surface-deep p-4 text-center text-sm text-muted-foreground">
+              {t("qc.loading")}
+            </p>
+          ) : (
+            <QcGrid images={focused?.images ?? []} />
+          )}
+        </section>
+      ) : null}
+
       {result?.ok ? (
         <section className="mb-10">
           <h2 className="mb-3 text-lg font-bold">{result.title || t("qc.result")}</h2>
