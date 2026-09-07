@@ -1679,8 +1679,28 @@ function ProductsTab() {
               {p.image_url ? (
                 <img src={p.image_url} alt="" className="h-10 w-10 rounded-lg object-cover" />
               ) : null}
-              <span className="flex-1 text-sm font-semibold">{p.title}</span>
+              <span className="flex-1 text-sm font-semibold">
+                {p.title}
+                <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
+                  {noLink(p) ? (
+                    <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-destructive">
+                      brak linku
+                    </span>
+                  ) : null}
+                  {brokenImage(p) ? (
+                    <span className="rounded bg-primary/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary">
+                      brak zdjęcia
+                    </span>
+                  ) : null}
+                  {noQc(p) ? (
+                    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
+                      brak QC
+                    </span>
+                  ) : null}
+                </span>
+              </span>
               <span className="text-xs text-muted-foreground">{p.category}</span>
+
               <button
                 className={btnGhost}
                 aria-label="W górę"
