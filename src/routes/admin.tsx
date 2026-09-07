@@ -1203,6 +1203,12 @@ function ProductsTab() {
     !p.image_url || p.image_url.startsWith("/api/public/product-image");
   /** Produkt bez zdjęć QC (sprawdzone u agentów — brak w magazynie) — na samą górę. */
   const noQc = (p: Product) => (p.qc_images ?? []).length === 0;
+  /** Produkt bez jakiegokolwiek linku (agenci / sklep). */
+  const noLink = (p: Product) =>
+    !Object.values(p.agent_links ?? {}).some((v) => (v ?? "").trim()) && !(p.store_url ?? "").trim();
+  /** Im więcej braków, tym wyżej na liście. */
+  const gapScore = (p: Product) =>
+    (noLink(p) ? 4 : 0) + (brokenImage(p) ? 2 : 0) + (noQc(p) ? 1 : 0);
 
   const matched = useMemo(() => {
     const list = ordered.filter((p) =>
@@ -1213,17 +1219,13 @@ function ProductsTab() {
         : true,
     );
     if (orderIds) return list;
-    // Stabilne sortowanie: najpierw produkty bez zdjęć QC, potem bez zdjęcia głównego.
+    // Stabilne sortowanie: najpierw produkty z brakami (link → zdjęcie → QC).
     return list
       .map((p, i) => ({ p, i }))
-      .sort(
-        (a, b) =>
-          Number(noQc(b.p)) - Number(noQc(a.p)) ||
-          Number(brokenImage(b.p)) - Number(brokenImage(a.p)) ||
-          a.i - b.i,
-      )
+      .sort((a, b) => gapScore(b.p) - gapScore(a.p) || a.i - b.i)
       .map((x) => x.p);
   }, [ordered, q, orderIds]);
+
 
   useEffect(() => {
     setLimit(ADMIN_PAGE_SIZE);
