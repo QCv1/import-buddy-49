@@ -1203,6 +1203,12 @@ function ProductsTab() {
     !p.image_url || p.image_url.startsWith("/api/public/product-image");
   /** Produkt bez zdjęć QC (sprawdzone u agentów — brak w magazynie) — na samą górę. */
   const noQc = (p: Product) => (p.qc_images ?? []).length === 0;
+  /** Produkt bez jakiegokolwiek linku (agenci / sklep). */
+  const noLink = (p: Product) =>
+    !Object.values(p.agent_links ?? {}).some((v) => (v ?? "").trim()) && !(p.store_url ?? "").trim();
+  /** Im więcej braków, tym wyżej na liście. */
+  const gapScore = (p: Product) =>
+    (noLink(p) ? 4 : 0) + (brokenImage(p) ? 2 : 0) + (noQc(p) ? 1 : 0);
 
   const matched = useMemo(() => {
     const list = ordered.filter((p) =>
@@ -1213,17 +1219,13 @@ function ProductsTab() {
         : true,
     );
     if (orderIds) return list;
-    // Stabilne sortowanie: najpierw produkty bez zdjęć QC, potem bez zdjęcia głównego.
+    // Stabilne sortowanie: najpierw produkty z brakami (link → zdjęcie → QC).
     return list
       .map((p, i) => ({ p, i }))
-      .sort(
-        (a, b) =>
-          Number(noQc(b.p)) - Number(noQc(a.p)) ||
-          Number(brokenImage(b.p)) - Number(brokenImage(a.p)) ||
-          a.i - b.i,
-      )
+      .sort((a, b) => gapScore(b.p) - gapScore(a.p) || a.i - b.i)
       .map((x) => x.p);
   }, [ordered, q, orderIds]);
+
 
   useEffect(() => {
     setLimit(ADMIN_PAGE_SIZE);
@@ -1677,8 +1679,28 @@ function ProductsTab() {
               {p.image_url ? (
                 <img src={p.image_url} alt="" className="h-10 w-10 rounded-lg object-cover" />
               ) : null}
-              <span className="flex-1 text-sm font-semibold">{p.title}</span>
+              <span className="flex-1 text-sm font-semibold">
+                {p.title}
+                <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
+                  {noLink(p) ? (
+                    <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-destructive">
+                      brak linku
+                    </span>
+                  ) : null}
+                  {brokenImage(p) ? (
+                    <span className="rounded bg-primary/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary">
+                      brak zdjęcia
+                    </span>
+                  ) : null}
+                  {noQc(p) ? (
+                    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
+                      brak QC
+                    </span>
+                  ) : null}
+                </span>
+              </span>
               <span className="text-xs text-muted-foreground">{p.category}</span>
+
               <button
                 className={btnGhost}
                 aria-label="W górę"
