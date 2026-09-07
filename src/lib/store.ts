@@ -139,7 +139,7 @@ export const useSellers = () =>
     queryFn: async () => {
       const { LOCAL_SELLERS_PUBLIC } = await import("@/data/local-sellers");
       const { data, error } = await supabase
-        .from("sellers")
+        .from("sellers_public")
         .select(SELLER_COLUMNS)
         .order("name")
         .then((r) => r, () => ({ data: null, error: new Error("offline") }));
